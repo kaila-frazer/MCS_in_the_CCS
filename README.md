@@ -1,11 +1,3 @@
-# TODO
-
-## Clarify outputs in MCS code
-## Add MCS files to GitHub
-## Edit how MCS files get called, especially normal MCSs in habitat detection file and for the MCS stats in sanctuaries figure
-## Skim code for each figure, editing inputs and outputs
-## Final read over
-
 # Marine cold-spells in the California Current System
 This repository contains code used for analysis for a paper currently in review. Each R script contributing to the paper is described below. The scripts should be run in the order in which they are presented below.
 
@@ -28,17 +20,17 @@ This script is very similar to the previous one (we also run it three times for 
 Inputs required:
 To make this figure, you'll need a netCDF of sea surface temperature data. Here, we use dynamically downscaled sea surface temperature data which was published in Pozo Buil et al. (2021).
 
-## Calculate habitat threshold
+## 3. Calculate habitat thresholds
 Calculate a threshold for core species habitat using the dismo() package in R. We chose the equal sensitivity and specificity threshold.
 
 Inputs required:
 Calculating the threshold requires access to the original species distribution models as well as the original data. We've included the accurate thresholds where necessary in the code going forward, so accessing these models isn't necessary to get the rest of the code to work.
 
-## Measure habitat
-**** the impacts of marine cold-spells on two species' suitable. Please note that this script is computationally intensive to run (allocate half a day to run on a supercomputer).
+## 4. Measure habitat
+Here, we create dataframes which quantify the impacts of marine cold-spells on two species' suitable habitat within California's National Marine Sanctuaries. Please note that this script is computationally intensive to run (allocate half a day to run on a supercomputer).
 
 Inputs required:
-This code requires many raster files of habitat suitability. These files are publicly available on ERDDAP (https://www.ncei.noaa.gov/erddap/index.html). It also requires the five NMS Shapefiles included in this repository. You'll also need dataframes of marine cold-spells detected in the system, which can be created via the Detect marine cold-spells.R script.
+This code requires many raster files of habitat suitability. These files are publicly available on ERDDAP (https://www.ncei.noaa.gov/erddap/index.html). It also requires the five NMS Shapefiles and unique raster key included in this repository. You'll also need dataframes of marine cold-spells detected in the system, which are included here and can be created via the Detect marine cold-spells.R script.
 
 ## Build Fig 1
 Code to create Fig 1, which displays a map of the California Current System and its National Marine Sanctuaries.
@@ -52,11 +44,11 @@ Fig 2 creates a graphical representation of how marine cold-spells are detected 
 Inputs required:
 To make this figure, you'll need a sea surface temperature time series. Here, we use dynamically downscaled sea surface temperature data which was published in Pozo Buil et al. (2021).
 
-## Build Fig 3
-Please note that the data processing required for this figure may take a long time (a day on a normal computer).
+## Build Fig 3 and Supplementary Fig 4
+Build a figure displaying typical marine cold-spells occuring per year across the California Current. The supplementary figure breaks down the results by climate model. Please note that the data processing required for this figure may take a long time (a day on a normal computer).
 
 Inputs required:
-This figure requires datasets of predicted and projected marine cold-spells in the California Current, which are stored in this repository in the "MCSs Detected" folder. Additionally, this script requires the roms_unique_id.grd file and the five NMS Shapefiles included in this repository.
+This figure requires datasets of predicted and projected marine cold-spells in the California Current, which are stored in this repository in the "MCSs Detected" folder. Additionally, this script requires the unique raster key file and the five NMS Shapefiles included in this repository.
 
 ## Build Fig 4 (**and supps?)
 ****
