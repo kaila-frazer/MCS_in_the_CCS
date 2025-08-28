@@ -9,17 +9,30 @@
 # Marine cold-spells in the California Current System
 This repository contains code used for analysis for a paper currently in review. Each R script contributing to the paper is described below. The scripts should be run in the order in which they are presented below.
 
-## Detect marine cold-spells
-**** Please note that this script is computationally intensive to run (allocate a day to run on a supercomputer).
+#### Key to acronyms:
+
+* MCS = Marine cold-spell
+* NMS = National Marine Sanctuary
+
+## 1. Detect normal MCSs
+Detect marine cold-spells using a historical climatology. The outputs of this code are included in this repository.
+
+We run this code three times, once for each of the three downscaled climate models. This code produces a unique identifier raster which should only be produced once; after running the code the first time, skip that step. Please note that this script is computationally intensive to run (allocate a day to run on a supercomputer).
 
 Inputs required:
-****
+To make this figure, you'll need a netCDF of sea surface temperature data. Here, we use dynamically downscaled sea surface temperature data which was published in Pozo Buil et al. (2021).
+
+## 2. Detect detrended MCSs
+This script is very similar to the previous one (we also run it three times for three models), but it detects marine cold-spells from a detrended temperature time series. The outputs of this code are included in this repository.
+
+Inputs required:
+To make this figure, you'll need a netCDF of sea surface temperature data. Here, we use dynamically downscaled sea surface temperature data which was published in Pozo Buil et al. (2021).
 
 ## Calculate habitat threshold
-****
+Calculate a threshold for core species habitat using the dismo() package in R. We chose the equal sensitivity and specificity threshold.
 
 Inputs required:
-****
+Calculating the threshold requires access to the original species distribution models as well as the original data. We've included the accurate thresholds where necessary in the code going forward, so accessing these models isn't necessary to get the rest of the code to work.
 
 ## Measure habitat
 **** the impacts of marine cold-spells on two species' suitable. Please note that this script is computationally intensive to run (allocate half a day to run on a supercomputer).
@@ -37,7 +50,7 @@ To run this code, you'll need the five NMS Shapefiles included in this repositor
 Fig 2 creates a graphical representation of how marine cold-spells are detected in the paper.
 
 Inputs required:
-To make this figure, you'll need a sea surface temperature time series. Here, we use dynamically downscaled sea surface temperature data which was published in Pozo Buil et al. (2021) and is available upon request from Mercedes Pozo Buil.
+To make this figure, you'll need a sea surface temperature time series. Here, we use dynamically downscaled sea surface temperature data which was published in Pozo Buil et al. (2021).
 
 ## Build Fig 3
 Please note that the data processing required for this figure may take a long time (a day on a normal computer).
