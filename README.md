@@ -32,32 +32,32 @@ Here, we create dataframes which quantify the impacts of marine cold-spells on t
 Inputs required:
 This code requires many raster files of habitat suitability. These files are publicly available on ERDDAP (https://www.ncei.noaa.gov/erddap/index.html). It also requires the five NMS Shapefiles and unique raster key included in this repository. You'll also need dataframes of marine cold-spells detected in the system, which are included here and can be created via the Detect marine cold-spells.R script.
 
-## Build Fig 1
+## 5. Build Fig 1
 Code to create Fig 1, which displays a map of the California Current System and its National Marine Sanctuaries.
 
 Inputs required:
 To run this code, you'll need the five NMS Shapefiles included in this repository. You'll also need to download a raster file of bathymetry data for the California Current via the ERDDAP server (https://www.ncei.noaa.gov/erddap/index.html). 
 
-## Build Fig 2
+## 6. Build Fig 2
 Fig 2 creates a graphical representation of how marine cold-spells are detected in the paper.
 
 Inputs required:
 To make this figure, you'll need a sea surface temperature time series. Here, we use dynamically downscaled sea surface temperature data which was published in Pozo Buil et al. (2021).
 
-## Build Fig 3 and Supplementary Fig 4
+## 7. Build Fig 3 and supplementary Fig 4
 Build a figure displaying typical marine cold-spells occuring per year across the California Current. The supplementary figure breaks down the results by climate model. Please note that the data processing required for this figure may take a long time (a day on a normal computer).
 
 Inputs required:
 This figure requires datasets of predicted and projected marine cold-spells in the California Current, which are stored in this repository in the "MCSs Detected" folder. Additionally, this script requires the unique raster key file and the five NMS Shapefiles included in this repository.
 
-## Build Fig 4 (**and supps?)
-****
+## 8. Build Fig 4
+Build a figure to display changes in marine cold-spells within California's National Marine Sanctuaries.
 
 Inputs required:
-****
+This figure requires datasets of marine cold-spell occurrences created in the first two scripts. These datasets are also available in the repository.
 
-## Build Fig 5 (**and supps?)
-****
+## 9. Build Fig 5
+Build a figure that shows changes from the historical period to the current period in species habitat across the California Current.
 
 Inputs required:
 ****
