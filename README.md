@@ -1,11 +1,8 @@
 # TODO
 
-## Compile working R scripts into GitHub folder
-## Combine MCS files if possible
 ## Clarify outputs in MCS code
 ## Add MCS files to GitHub
 ## Edit how MCS files get called, especially normal MCSs in habitat detection file and for the MCS stats in sanctuaries figure
-## Combine habitat threshold files
 ## Skim code for each figure, editing inputs and outputs
 ## Final read over
 
