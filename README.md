@@ -1,3 +1,14 @@
+# TODO
+
+## Compile working R scripts into GitHub folder
+## Combine MCS files if possible
+## Clarify outputs in MCS code
+## Add MCS files to GitHub
+## Edit how MCS files get called, especially normal MCSs in habitat detection file and for the MCS stats in sanctuaries figure
+## Combine habitat threshold files
+## Skim code for each figure, editing inputs and outputs
+## Final read over
+
 # Marine cold-spells in the California Current System
 This repository contains code used for analysis for a paper currently in review. Each R script contributing to the paper is described below. The scripts should be run in the order in which they are presented below.
 
