@@ -60,18 +60,18 @@ This figure requires datasets of marine cold-spell occurrences created in the fi
 Build a figure that shows changes from the historical period to the current period in species habitat across the California Current.
 
 Inputs required:
-****
+This code requires many raster files of habitat suitability. These files are publicly available on ERDDAP (https://www.ncei.noaa.gov/erddap/index.html).
 
-## Build Fig 6 and Supplementary Fig 5
+## Build Fig 6 and supplementary Fig 5
 Fig 6 shows how the study species responded to marine cold-spells across National Marine Sanctuaries and through time. Supplementary Fig 5 shows the standard deviations of the species' responses. This code also takes the averages of each species' responses to marine cold-spells; these average numbers are mentioned in the paper.
 
 Inputs required:
 These figures require the dataframes of species' responses to marine cold-spells generated in the Measure Habitat.R script.
 
-## Build Fig 7 (**and supps?)
-****
+## Build Fig 7
+Build a figure comparing species distribution model response curves with modeled sea surface temperature data. The goal of this figure is to understand the mechanisms behind modeled species' response to marine cold-spells.
 
 Inputs required:
-****
+This figure requires the NMS shapefiles and unique raster key included in this repository. You'll also need access to the original species distribution models (we use models built by Abrahms et al. 2019 and Lezama Ochoa et al. 2024) and dynamically downscaled sea surface temperature data published in Pozo Buil et al. 2021.
 
 Please contact Kaila Frazer (kaila.frazer@unh.edu) for information or feedback.
