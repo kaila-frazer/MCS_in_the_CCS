@@ -44,7 +44,7 @@ Fig 2 creates a graphical representation of how marine cold-spells are detected 
 *Inputs required:*
 To make this figure, you'll need a sea surface temperature time series. Here, we use dynamically downscaled sea surface temperature data which was published in Pozo Buil et al. 2021.
 
-## 7. Build Fig 3 and supplementary Fig 4
+## 7. Build Fig 3 (and supplementary Fig 4)
 Build a figure displaying typical marine cold-spells occuring per year across the California Current. The supplementary figure breaks down the results by climate model. Please note that the data processing required for this figure may take a long time (a day on a normal computer).
 
 *Inputs required:*
@@ -62,13 +62,13 @@ Build a figure that shows changes from the historical period to the current peri
 *Inputs required:*
 This code requires many raster files of habitat suitability. These files are publicly available on ERDDAP (https://www.ncei.noaa.gov/erddap/index.html).
 
-## Build Fig 6 and supplementary Fig 5
+## 10. Build Fig 6 (and supplementary Fig 5)
 Fig 6 shows how the study species responded to marine cold-spells across National Marine Sanctuaries and through time. Supplementary Fig 5 shows the standard deviations of the species' responses. This code also takes the averages of each species' responses to marine cold-spells; these average numbers are mentioned in the paper.
 
 *Inputs required:*
 These figures require the dataframes of species' responses to marine cold-spells generated in the Measure Habitat.R script.
 
-## Build Fig 7
+## 11. Build Fig 7
 Build a figure comparing species distribution model response curves with modeled sea surface temperature data. The goal of this figure is to understand the mechanisms behind modeled species' response to marine cold-spells.
 
 *Inputs required:*
