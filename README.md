@@ -30,7 +30,7 @@ Calculating the threshold requires access to the original species distribution m
 Here, we create dataframes of the impacts of marine cold-spells on two species' suitable habitat within California's National Marine Sanctuaries. Please note that this script is computationally intensive to run (allocate half a day to run on a supercomputer).
 
 Inputs required:
-This code requires many raster files of habitat suitability. These files are publicly available on ERDDAP (https://www.ncei.noaa.gov/erddap/index.html). It also requires the five NMS Shapefiles and unique raster key included in this repository. You'll also need dataframes of marine cold-spells detected in the system, which can can be created from the first two scripts in this repository.
+This code requires many raster files of habitat suitability. These files are publicly available on ERDDAP (https://www.ncei.noaa.gov/erddap/index.html). It also requires the five NMS Shapefiles and unique raster key included in this repository. You'll also need dataframes of marine cold-spells detected in the system, which can be created from the first two scripts in this repository.
 
 ## 5. Build Fig 1
 Code to create Fig 1, which displays a map of the California Current System and its National Marine Sanctuaries.
@@ -42,13 +42,13 @@ To run this code, you'll need the five shapefiles included in this repository. Y
 Fig 2 creates a graphical representation of how marine cold-spells are detected in the paper.
 
 Inputs required:
-To make this figure, you'll need a sea surface temperature time series. Here, we use dynamically downscaled sea surface temperature data which was published in Pozo Buil et al. (2021).
+To make this figure, you'll need a sea surface temperature time series. Here, we use dynamically downscaled sea surface temperature data which was published in Pozo Buil et al. 2021.
 
 ## 7. Build Fig 3 and supplementary Fig 4
 Build a figure displaying typical marine cold-spells occuring per year across the California Current. The supplementary figure breaks down the results by climate model. Please note that the data processing required for this figure may take a long time (a day on a normal computer).
 
 Inputs required:
-This figure requires datasets of predicted and projected marine cold-spells in the California Current, which are stored in this repository in the "MCSs Detected" folder. Additionally, this script requires the unique raster key file and the five NMS Shapefiles included in this repository.
+This figure requires datasets of predicted and projected marine cold-spells in the California Current created in the first two scripts in this repository. Additionally, this script requires the unique raster key file and the five NMS Shapefiles included in this repository.
 
 ## 8. Build Fig 4
 Build a figure to display changes in marine cold-spells within California's National Marine Sanctuaries.
@@ -71,7 +71,7 @@ These figures require the dataframes of species' responses to marine cold-spells
 ## Build Fig 7
 Build a figure comparing species distribution model response curves with modeled sea surface temperature data. The goal of this figure is to understand the mechanisms behind modeled species' response to marine cold-spells.
 
-Inputs required:
+*Inputs required:*
 This figure requires the NMS shapefiles and unique raster key included in this repository. You'll also need access to the original species distribution models (we use models built by Abrahms et al. 2019 and Lezama Ochoa et al. 2024) and dynamically downscaled sea surface temperature data published in Pozo Buil et al. 2021.
 
 Please contact Kaila Frazer (kaila.frazer@unh.edu) for information or feedback.
