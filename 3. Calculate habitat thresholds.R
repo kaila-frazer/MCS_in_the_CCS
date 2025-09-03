@@ -9,9 +9,9 @@ library(mgcv)
 library(dismo)
 library(lubridate)
 
-lbst_model=readRDS("D:/Dropbox Backup [MCS Stuff] 1-11-25/Models/Kaila/lbst_noSSH.res1.tc3.lr01.single.rds") # Read in leatherback model
+lbst_model=readRDS("/Volumes/One Touch/Dropbox Backup [MCS Stuff] 1-11-25/Models/Kaila/lbst_noSSH.res1.tc3.lr01.single.rds") # Read in leatherback model
 
-fit.dat=readRDS("C:/Users/kaila/Desktop/Honors/Habitat/lbst_bstrp_list.rds")[[1]] # Read in data used to fit the leatherback model
+fit.dat=readRDS("/Users/kailafrazer/Desktop/MCS/Honors/Habitat/lbst_bstrp_list.rds")[[1]] # Read in data used to fit the leatherback model
 
 pred=as.data.frame(predict.gbm(lbst_model, fit.dat, n.trees=lbst_model$gbm.call$best.trees, type="response"))[,1]
 
@@ -45,18 +45,18 @@ library(dismo)
 library(lubridate)
 
 
-gam_sf=readRDS("C:/Users/kaila/Desktop/Honors/BLWH Models/GAMs/blwh.res1.gam.sf.mod1.rds")
-gam_ws=readRDS("C:/Users/kaila/Desktop/Honors/BLWH Models/GAMs/blwh.res1.gam.ws.mod1.rds")
+gam_sf=readRDS("/Users/kailafrazer/Desktop/MCS/Honors/BLWH Models/GAMs/blwh.res1.gam.sf.mod1.rds")
+gam_ws=readRDS("/Users/kailafrazer/Desktop/MCS/Honors/BLWH Models/GAMs/blwh.res1.gam.ws.mod1.rds")
 # Read in blue whale GAMs
 
-fit.dat=readRDS("C:/Users/kaila/Dropbox/Models/blwh_ROMSvar_list.rds")[[1]]%>%  
+fit.dat=readRDS("/Volumes/One Touch/Dropbox Backup [MCS Stuff] 1-11-25/Models/blwh_ROMSvar_list.rds")[[1]]%>%  
   mutate(ptt = 723029) # Read in data used to predict the blue whale GAMs
 
 pred_gam_ws=as.data.frame(predict.gam(gam_ws,newdata=fit.dat, type = 'response'))[,1]
 pred_gam_sf=as.data.frame(predict.gam(gam_sf,newdata=fit.dat, type = 'response'))[,1]
 
-ws_mod_preds <- cbind(pred_gam_ws, pred_brt_ws); ws_mod_preds <- rowMeans(ws_mod_preds, na.rm=T) # Averaging ws models
-sf_mod_preds <- cbind(pred_gam_sf, pred_brt_sf); sf_mod_preds <- rowMeans(sf_mod_preds, na.rm=T) # Averaging sf models
+ws_mod_preds <- pred_gam_ws #cbind(pred_gam_ws, pred_brt_ws); ws_mod_preds <- rowMeans(ws_mod_preds, na.rm=T) # Averaging ws models
+sf_mod_preds <- pred_gam_sf #cbind(pred_gam_sf, pred_brt_sf); sf_mod_preds <- rowMeans(sf_mod_preds, na.rm=T) # Averaging sf models
 
 # Assign winter/spring model weightings for each week of year
 # Weightings for summer/fall model are 1 - winter/spring weightings
