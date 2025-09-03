@@ -9,12 +9,13 @@ library(terra)
 library(patchwork)
 library(cowplot)
 library(vroom)
+library(ragg)
 
 #2. Load foundational data ####
 
 # Here, I retrieve the dataframes of species' responses to marine cold-spells generated in a the Measure Habitat.R script.
 
-setwd("D:/Dropbox Backup [MCS Stuff] 1-11-25/Kaila_newMCSs/")
+setwd("/Volumes/One Touch/Dropbox Backup [MCS Stuff] 1-11-25/Kaila_newMCSs/")
 
 # Detrended habitat
 dt_gfdl <- vroom("Habitat Detected/contemp_newthresh_gfdl.csv")
@@ -64,40 +65,49 @@ snct_names <- data.frame(sanctuary=c("gf", "cb", "mb", "ch", "ci"), snct_name=c(
 dt <- right_join(dt, snct_names); dt$order = factor(dt$snct_name, ordered=T, levels=c("Channel Islands", "Chumash Heritage", "Monterey Bay", "Cordell Bank", "Greater Farallones"))
 nor <- right_join(nor, snct_names); nor$order = factor(nor$snct_name, ordered=T, levels=c("Channel Islands", "Chumash Heritage", "Monterey Bay", "Cordell Bank", "Greater Farallones"))
 
-# Gather fun little plot add-ons
-whale <- ggdraw() + draw_image("C:/Users/kaila/Downloads/blwh silhouette fancy.jpg")
-turtle <- ggdraw() + draw_image("C:/Users/kaila/Downloads/lbst silhouette.jpg")
-
 # Theme :)
-theme_set(theme(axis.title=element_text(size=20), axis.text=element_text(size=16), legend.text=element_text(size=16), legend.title=element_text(size=16), plot.title=element_text(size=20)))
+theme <- theme_set(theme_classic())
+theme_set(theme(axis.title=element_text(size=10,face="bold"), axis.text=element_text(size=8), legend.text=element_text(size=8), legend.title=element_text(size=10,face="bold"), plot.title=element_text(size=12,face="bold",hjust=0),panel.grid.major=element_blank(),panel.border=element_rect(color="black",fill=NA,linewidth=1),axis.line=element_blank()))
 
 #5. Plot :) ####
 
-{nor_blwh_juloct <- ggplot(nor) + geom_tile(aes(x=decade, y=order, fill=juloct_blwh_reldl)) + scale_fill_gradient2("Relative Δ\nCore Habitat (%)", high="#cf4446", low="#31688e", mid="white", na.value="white", limits=c(-20,20), midpoint=0) + labs(x="", y="Sanctuary", title="A. Blue Whale Response\nto Fixed Cold Spells") + theme_classic() + theme_get() + theme(axis.text.y=element_text(angle=25, margin=margin(r=8)), axis.text.x=element_blank()) + inset_element(whale, left=0.85, right=1,  bottom=1, top=1.2)
+{nor_blwh_juloct <- ggplot(nor) + geom_tile(aes(x=decade, y=order, fill=juloct_blwh_reldl), color="white")+coord_fixed(ratio=11)+scale_fill_gradient2("Relative Δ\nCore Habitat (%)", high="#cf4446", low="#31688e", mid="white", na.value="white", limits=c(-20,20), midpoint=0) + labs(x="", y="", title="A. Blue Whale Response\nto Fixed Cold-spells") + theme_classic()+theme_get() + theme(axis.text.x=element_blank())
 
-dt_blwh_juloct <- ggplot(dt) + geom_tile(aes(x=decade, y=order, fill=juloct_blwh_reldl)) + scale_fill_gradient2("Relative Δ\nCore Habitat (%)", high="#cf4446", low="#31688e", mid="white", na.value="white", limits=c(-20,20), midpoint=0) + labs(x="Decade", y="Sanctuary", title="B. Blue Whale Response\nto Detrended Cold Spells") + scale_x_continuous(breaks=c(1980, 2000, 2020, 2040, 2060, 2080)) + theme_classic() + theme_get()+ theme(axis.text.y=element_text(angle=25, margin=margin(r=8)), axis.text.x=element_text(angle=25, margin=margin(t=8))) + inset_element(whale,left=.85,right=1,bottom=1,top=1.2)}
+dt_blwh_juloct <- ggplot(dt) + geom_tile(aes(x=decade, y=order, fill=juloct_blwh_reldl), color="white")+coord_fixed(ratio=11)+scale_fill_gradient2("Relative Δ\nCore Habitat (%)", high="#cf4446", low="#31688e", mid="white", na.value="white", limits=c(-20,20), midpoint=0) + labs(x="Decade", y="", title="B. Blue Whale Response\nto Detrended Cold-spells") + scale_x_continuous(breaks=c(1980, 2000, 2020, 2040, 2060, 2080)) + theme_classic()+theme_get()}
 
-{nor_blwh_jun <- ggplot(nor) + geom_tile(aes(x=decade, y=order, fill=jun_blwh_reldl)) + scale_fill_gradient2("Relative Δ\nCore Habitat (%)", high="#cf4446", low="#31688e", mid="white", na.value="white", midpoint=0) + labs(x="", y="Sanctuary", title="A. Blue Whale Response\nto Fixed Cold Spells") + theme_classic() + theme_get() + theme(axis.text.y=element_text(angle=25, margin=margin(r=8)), axis.text.x=element_blank()) + inset_element(whale, left=0.85, right=1,  bottom=1, top=1.2)
+{nor_blwh_jun <- ggplot(nor) + geom_tile(aes(x=decade, y=order, fill=jun_blwh_reldl), color="white")+coord_fixed(ratio=11)+ scale_fill_gradient2("Relative Δ\nCore Habitat (%)", high="#cf4446", low="#31688e", mid="white", na.value="white", midpoint=0) + labs(x="", y="", title="A. Blue Whale Response\nto Fixed Cold-spells") + theme_classic()+theme_get() + theme(axis.text.x=element_blank())
 
-dt_blwh_jun <- ggplot(dt) + geom_tile(aes(x=decade, y=order, fill=jun_blwh_reldl)) + scale_fill_gradient2("Relative Δ\nCore Habitat (%)", high="#cf4446", low="#31688e", mid="white", na.value="white", midpoint=0) + labs(x="Decade", y="Sanctuary", title="A. Blue Whale Response\nto Detrended Cold Spells\nin June") + scale_x_continuous(breaks=c(1980, 2000, 2020, 2040, 2060, 2080)) + theme_classic() + theme_get()+ theme(axis.text.y=element_text(angle=25, margin=margin(r=8)), axis.text.x=element_text(angle=25, margin=margin(t=8))) + inset_element(whale,left=.85,right=1,bottom=1,top=1.2)}
+dt_blwh_jun <- ggplot(dt) + geom_tile(aes(x=decade, y=order, fill=jun_blwh_reldl), color="white")+coord_fixed(ratio=11)+ scale_fill_gradient2("Relative Δ\nCore Habitat (%)", high="#cf4446", low="#31688e", mid="white", na.value="white", midpoint=0) + labs(x="Decade", y="", title="A. Blue Whale Response\nto Detrended Cold-spells\nin June") + scale_x_continuous(breaks=c(1980, 2000, 2020, 2040, 2060, 2080)) + theme_classic()+theme_get()}
 
-{nor_lbst_juloct <- ggplot(nor) + geom_tile(aes(x=decade, y=order, fill=juloct_lbst_reldl)) + scale_fill_gradient2("Relative Δ\nCore Habitat (%)", high="#cf4446", low="#31688e", mid="white", na.value="white", limits=c(-20,20), midpoint=0) + labs(x="", y="", title="B. Leatherback Response\nto Fixed Cold Spells") + theme_classic() + theme_get() + theme(axis.text.y=element_blank(), axis.text.x=element_blank()) + inset_element(turtle,left=.88,right=1,bottom=1,top=1.2)
+{nor_lbst_juloct <- ggplot(nor) + geom_tile(aes(x=decade, y=order, fill=juloct_lbst_reldl), color="white")+coord_fixed(ratio=11)+scale_fill_gradient2("Relative Δ\nCore Habitat (%)", high="#cf4446", low="#31688e", mid="white", na.value="white", limits=c(-20,20), midpoint=0) + labs(x="", y="", title="B. Leatherback Response\nto Fixed Cold-spells") + theme_classic()+theme_get() + theme(axis.text.y=element_blank(), axis.text.x=element_blank())
   
-dt_lbst_juloct <- ggplot(dt) + geom_tile(aes(x=decade, y=order, fill=juloct_lbst_reldl)) + scale_fill_gradient2("Relative Δ\nCore Habitat (%)", high="#cf4446", low="#31688e", mid="white", na.value="white", limits=c(-20,20), midpoint=0) + labs(x="", y="", title="D. Leatherback Response\nto Detrended Cold Spells") + theme_classic() + theme_get() + theme(axis.text.x=element_text(angle=25, margin=margin(t=8)), axis.text.y=element_blank()) + inset_element(turtle,left=.88,right=1,bottom=1,top=1.2)}
+dt_lbst_juloct <- ggplot(dt) + geom_tile(aes(x=decade, y=order, fill=juloct_lbst_reldl), color="white")+coord_fixed(ratio=11)+scale_fill_gradient2("Relative Δ\nCore Habitat (%)", high="#cf4446", low="#31688e", mid="white", na.value="white", limits=c(-20,20), midpoint=0) + labs(x="Decade", y="", title="D. Leatherback Response\nto Detrended Cold-spells") + theme_classic()+theme_get() + theme(axis.text.y=element_blank())}
+
+setwd("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 Final Materials/300dpi Figures/")
+
+ragg::agg_tiff("Fig6.tiff", width = 7.5, height = 4, units = "in", res = 300)
 
 (nor_blwh_juloct | nor_lbst_juloct) / (dt_blwh_juloct | dt_lbst_juloct) + plot_layout(guides="collect") # 1400 x 1000 works for insets
 
+dev.off()
+
 #6. Plot standard deviations ####
 
-norsd_blwh <- ggplot(nor) + geom_tile(aes(x=decade, y=order, fill=juloct_blwh_sd)) + scale_fill_gradient("SD Δ\nCore Habitat", high="#fde725", low="#21918c", na.value="#21918c") + labs(x="", y="Sanctuary", title="A. Blue Whale Response\nto Fixed Cold Spells") + theme_classic() + theme_get() + theme(axis.text.y = element_text(angle=25,margin = margin(r = 10)), axis.text.x=element_blank())
+norsd_blwh <- ggplot(nor) + geom_tile(aes(x=decade, y=order, fill=juloct_blwh_sd), color="white")+coord_fixed(ratio=11)+ scale_fill_gradient("SD Δ\nCore\nHabitat", high="#fde725", low="#21918c", na.value="#21918c") + labs(x="", y="", title="A. Blue Whale Response\nto Fixed Cold-spells") + theme_classic()+ theme_get() + theme(axis.text.x=element_blank())
 
-dtsd_blwh <- ggplot(dt) + geom_tile(aes(x=decade, y=order, fill=juloct_blwh_sd)) + scale_fill_gradient("SD Δ\nCore Habitat", high="#fde725", low="#21918c", na.value="#21918c") + labs(x="Decade", y="Sanctuary", title="C. Blue Whale Response\nto Detrended Cold Spells") + scale_x_continuous(breaks=c(1980, 2000, 2020, 2040, 2060, 2080)) + theme_classic() + theme_get() +theme(axis.text.y = element_text(angle=25,margin = margin(r = 20)), axis.text.x=element_text(angle=25, margin=margin(t=8)))
+dtsd_blwh <- ggplot(dt) + geom_tile(aes(x=decade, y=order, fill=juloct_blwh_sd), color="white")+coord_fixed(ratio=11)+ scale_fill_gradient("SD Δ\nCore\nHabitat", high="#fde725", low="#21918c", na.value="#21918c") + labs(x="Decade", y="", title="C. Blue Whale Response\nto Detrended Cold-spells") + scale_x_continuous(breaks=c(1980, 2000, 2020, 2040, 2060, 2080)) + theme_classic()+theme_get()
 
-dtsd_lbst <- ggplot(dt) + geom_tile(aes(x=decade, y=order, fill=juloct_lbst_sd)) + scale_fill_gradient("SD Δ\nCore Habitat", high="#fde725", low="#21918c", na.value="#21918c") + labs(x="Decade", y="Sanctuary", title="D. Leatherback Response\nto Detrended Cold Spells") + scale_x_continuous(breaks=c(1980, 2000, 2020, 2040, 2060, 2080)) + theme_classic() + theme_get() +theme(axis.text.y = element_blank(), axis.text.x=element_text(angle=25, margin=margin(t=8)))
+dtsd_lbst <- ggplot(dt) + geom_tile(aes(x=decade, y=order, fill=juloct_lbst_sd), color="white")+coord_fixed(ratio=11)+ scale_fill_gradient("SD Δ\nCore\nHabitat", high="#fde725", low="#21918c", na.value="#21918c") + labs(x="Decade", y="", title="D. Leatherback Response\nto Detrended Cold-spells") + scale_x_continuous(breaks=c(1980, 2000, 2020, 2040, 2060, 2080)) + theme_classic()+theme_get() +theme(axis.text.y = element_blank())
 
-norsd_lbst <- ggplot(nor) + geom_tile(aes(x=decade, y=order, fill=juloct_lbst_sd)) + scale_fill_gradient("SD Δ\nCore Habitat", high="#fde725", low="#21918c", na.value="#21918c") + labs(x="", y="Sanctuary", title="B. Leatherback Response\nto Fixed Cold Spells") + theme_classic() + theme_get() +theme(axis.text.y=element_blank(), axis.text.x=element_blank())
+norsd_lbst <- ggplot(nor) + geom_tile(aes(x=decade, y=order, fill=juloct_lbst_sd), color="white")+coord_fixed(ratio=11)+ scale_fill_gradient("SD Δ\nCore\nHabitat", high="#fde725", low="#21918c", na.value="#21918c") + labs(x="", y="", title="B. Leatherback Response\nto Fixed Cold-spells") +theme_classic()+ theme_get() +theme(axis.text.y=element_blank(), axis.text.x=element_blank())
 
-(norsd_blwh | norsd_lbst) / (dtsd_blwh | dtsd_lbst)
+setwd("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 Final Materials/300dpi Figures/")
+
+ragg::agg_tiff("S5Fig.tiff", width = 7.5, height = 3.5, units = "in", res = 300)
+
+(norsd_blwh | norsd_lbst) / (dtsd_blwh | dtsd_lbst) #1200  700
+
+dev.off()
 
 #7. Gather some stats ####
 
