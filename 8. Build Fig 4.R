@@ -7,15 +7,18 @@ library(ggplot2)
 library(tidyterra)
 library(terra)
 library(patchwork)
+library(ragg)
+library(vroom)
+setwd("/Users/kailafrazer/")
 
 # Load NMS SpatVectors
-uqid <- rast("{GitHub directory}/roms_unique_id.grd")
+uqid <- rast("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/roms_unique_id.grd")
 # Load shapefiles of the NMSs
-cb <- vect("{GitHub directory}/NMS Shapefiles/cb/cbnms_py.shp")
-mb <- vect("{GitHub directory}/NMS Shapefiles/mb/mbnms_py.shp")
-ch <- vect("{GitHub directory}/NMS Shapefiles/ch/chnms_py.shp")
-ci <- vect("{GitHub directory}/NMS Shapefiles/ci/cinms_py.shp")
-gf <- vect("{GitHub directory}/NMS Shapefiles/gf/gfnms_py.shp")
+cb <- vect("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/NMS Shapefiles/cb/cbnms_py.shp")
+mb <- vect("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/NMS Shapefiles/mb/mbnms_py.shp")
+ch <- vect("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/NMS Shapefiles/ch/chnms_py.shp")
+ci <- vect("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/NMS Shapefiles/ci/cinms_py.shp")
+gf <- vect("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/NMS Shapefiles/gf/gfnms_py.shp")
 
 # Use SpatVectors of NMSs to find the cell ids within the NMSs
 cb_cells <- terra::extract(uqid, cb) %>% na.omit() %>% select(layer) %>% rename(pixel_id=layer) %>% mutate(sanct_id="cb")
@@ -32,14 +35,14 @@ sanctuary_sizes = data.frame(sanctuary=c("cb", "ci", "ch", "mb", "gf"), sizes=c(
 sanctuary_locs <- data.frame(sanctuary=c("gf", "cb", "mb", "ch", "ci"), loc=c(1,2,3,4,5))
 
 # Gather detrended MCSs
-gfdl_mcs_detr = read.csv("{GitHub directory}/MCSs Detected/mcs_gfdl_detrended.csv") %>% right_join(nms_cells)
-had_mcs_detr = read.csv("{GitHub directory}/MCSs Detected/mcs_had_detrended.csv") %>% right_join(nms_cells)
-ipsl_mcs_detr = read.csv("{GitHub directory}/MCSs Detected/mcs_ipsl_detrended.csv") %>% right_join(nms_cells)
+gfdl_mcs_detr = vroom("Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/MCSs Detected/mcs_gfdl_detrended.csv") %>% right_join(nms_cells)
+had_mcs_detr = vroom("Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/MCSs Detected/mcs_had_detrended.csv") %>% right_join(nms_cells)
+ipsl_mcs_detr = vroom("Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/MCSs Detected/mcs_ipsl_detrended.csv") %>% right_join(nms_cells)
 
 # Gather normal MCSs
-gfdl_mcs_norm = read.csv("{GitHub directory}/MCSs Detected/mcs_gfdl_normal.csv") %>% filter(climatology=="traditional") %>% right_join(nms_cells)
-had_mcs_norm = read.csv("{GitHub directory}/MCss Detected/mcs_had_normal.csv") %>% filter(climatology=="traditional") %>% right_join(nms_cells)
-ipsl_mcs_norm = read.csv("{GitHub directory}/MCSs Detected/mcs_ipsl_normal.csv") %>% filter(climatology=="traditional") %>% right_join(nms_cells)
+gfdl_mcs_norm = vroom("Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/MCSs Detected/mcs_gfdl_normal.csv") %>% filter(climatology=="traditional") %>% right_join(nms_cells)
+had_mcs_norm = vroom("Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/MCss Detected/mcs_had_normal.csv") %>% filter(climatology=="traditional") %>% right_join(nms_cells)
+ipsl_mcs_norm = vroom("Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/MCSs Detected/mcs_ipsl_normal.csv") %>% filter(climatology=="traditional") %>% right_join(nms_cells)
 
 #### 2. Extract decadal statistics from MCS .csvs ####
 
@@ -95,20 +98,29 @@ stats_detr = filter(stats_detr, decade != "2100")
 #### 3. Prepare to plot ####
 
 # Set theme pre-plotting
-theme_set(theme(axis.title=element_text(size=20), axis.text=element_text(size=16), legend.text=element_text(size=16), legend.title=element_text(size=16), plot.title=element_text(size=20)))
+theme <- theme_set(theme_classic())
+theme_set(theme(axis.title=element_text(size=10,face="bold"), axis.text=element_text(size=8), legend.text=element_text(size=8), legend.title=element_text(size=10,face="bold"), plot.title=element_text(size=12,face="bold",hjust=0),panel.border=element_rect(color="black",fill=NA,linewidth=1),axis.line=element_blank()))
+
 
 # Make normal plots
-n_days = ggplot(stats_norm) + geom_tile(aes(x=decade, y=order, fill=days_mean/86400)) + scale_fill_viridis_c("Mean cold\nspell days/year", option="G", direction=-1, limits=c(0,51), na.value="white")+ylab("Sanctuary")+xlab("")+ggtitle("A. Fixed Cold Spell Days")+theme_classic()+theme_get()+theme(legend.position="right", axis.text.y = element_text(angle = 25, margin=margin(r=10)), axis.text.x = element_blank())
+n_days = ggplot(stats_norm) + geom_tile(aes(x=decade, y=order, fill=days_mean/86400), color="white")+coord_fixed(ratio=11)+ scale_fill_viridis_c("Mean\ncold-spell\ndays/year", option="G", direction=-1, limits=c(0,51), na.value="white")+ylab("")+xlab("")+ggtitle("A. Fixed Cold-spell\nDays")+theme_classic()+theme_get()+theme(legend.position="right", axis.text.x = element_blank())
 
-n_duration = ggplot(stats_norm) + geom_tile(aes(x=decade, y=order, fill=duration_mean/86400)) + scale_fill_viridis_c("Mean\nduration\n(days)",option="D", direction=-1, na.value="white", lim=c(0.001,20))+ylab("Sanctuary")+xlab("")+ggtitle("C. Fixed Cold Spell Duration")+theme_classic()+theme_get()+theme(legend.position="right", axis.text.y=element_text(angle=25, margin=margin(r=10)), axis.text.x=element_blank()) # For this one I divide the duration (in seconds) by the number of seconds per day
-n_intensity = ggplot(stats_norm)+geom_tile(aes(x=decade,y=order,fill=intensity_mean))+scale_fill_viridis_c("Mean temp\nanomaly (°C)",option="C",na.value="white", lim=c(-2.5,-0.001))+ylab("Sanctuary")+xlab("Decade")+ggtitle("E. Fixed Cold Spell Intensity")+theme_classic()+theme_get()+ scale_x_continuous(breaks=c(1980, 2000, 2020, 2040, 2060, 2080))+theme(legend.position="right",axis.text.y=element_text(angle=25, margin=margin(r=10)), axis.text.x=element_text(angle=25, margin=margin(t=8)))
+n_duration = ggplot(stats_norm) + geom_tile(aes(x=decade, y=order, fill=duration_mean/86400), color="white")+coord_fixed(ratio=11)+ scale_fill_viridis_c("Mean\nduration\n(days)",option="D", direction=-1, na.value="white", lim=c(0.001,20))+ylab("")+xlab("")+ggtitle("C. Fixed Cold-spell\nDuration")+theme_classic()+theme_get()+theme(legend.position="right", axis.text.x=element_blank()) # For this one I divide the duration (in seconds) by the number of seconds per day
+
+n_intensity = ggplot(stats_norm)+geom_tile(aes(x=decade,y=order,fill=intensity_mean), color="white")+coord_fixed(ratio=11)+scale_fill_viridis_c("Mean temp\nanomaly (°C)",option="C",na.value="white", lim=c(-2.5,-0.001))+ylab("")+xlab("Decade")+ggtitle("E. Fixed Cold-spell\nIntensity")+theme_classic()+theme_get()+ scale_x_continuous(breaks=c(1980, 2000, 2020, 2040, 2060, 2080))+theme(legend.position="right")
 
 # Make detrended plots
-d_days = ggplot(stats_detr) + geom_tile(aes(x=decade, y=order, fill=days)) + scale_fill_viridis_c("Mean cold\nspell days/year", option="G", limits=c(0,51), direction=-1, na.value="white")+ylab("")+xlab("")+ggtitle("B. Detrended Cold Spell Days")+theme_classic()+theme_get()+theme(legend.position="right", axis.text.y = element_blank(), axis.text.x = element_blank())
+d_days = ggplot(stats_detr) + geom_tile(aes(x=decade, y=order, fill=days), color="white")+coord_fixed(ratio=11)+ scale_fill_viridis_c("Mean\ncold-spell\ndays/year", option="G", limits=c(0,51), direction=-1, na.value="white")+ylab("")+xlab("")+ggtitle("B. Detrended Cold-spell\nDays")+theme_classic()+theme_get()+theme(legend.position="right", axis.text.y = element_blank(), axis.text.x = element_blank())
 
-d_duration = ggplot(stats_detr) + geom_tile(aes(x=decade, y=order, fill=duration_mean)) + scale_fill_viridis_c("Mean\nduration\n(days)",option="D", direction=-1, na.value="white",lim=c(0.001,20))+ylab("")+xlab("")+ggtitle("D. Detrended Cold Spell Duration")+theme_classic()+theme_get()+theme(legend.position="right", axis.text.y=element_blank(), axis.text.x=element_blank())
+d_duration = ggplot(stats_detr) + geom_tile(aes(x=decade, y=order, fill=duration_mean), color="white")+coord_fixed(ratio=11)+ scale_fill_viridis_c("Mean\nduration\n(days)",option="D", direction=-1, na.value="white",lim=c(0.001,20))+ylab("")+xlab("")+ggtitle("D. Detrended Cold-spell\nDuration")+theme_classic()+theme_get()+theme(legend.position="right", axis.text.y=element_blank(), axis.text.x=element_blank())
 
-d_intensity = ggplot(stats_detr)+geom_tile(aes(x=decade,y=order,fill=intensity_mean))+scale_fill_viridis_c("Mean temp\nanomaly (°C)",option="C",na.value="white", lim=c(-2.5,-0.001))+ylab("")+xlab("Decade")+ggtitle("F. Detrended Cold Spell Intensity")+theme_classic()+theme_get()+ scale_x_continuous(breaks=c(1980, 2000, 2020, 2040, 2060, 2080))+theme(legend.position="right",axis.text.y=element_blank(), axis.text.x=element_text(angle=25, margin=margin(t=8)))
+d_intensity = ggplot(stats_detr)+geom_tile(aes(x=decade,y=order,fill=intensity_mean), color="white")+coord_fixed(ratio=11)+scale_fill_viridis_c("Mean temp\nanomaly (°C)",option="C",na.value="white", lim=c(-2.5,-0.001))+ylab("")+xlab("Decade")+ggtitle("F. Detrended Cold-spell\nIntensity")+theme_classic()+theme_get()+ scale_x_continuous(breaks=c(1980, 2000, 2020, 2040, 2060, 2080))+theme(legend.position="right",axis.text.y=element_blank())
+
+setwd("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 Final Materials/300dpi Figures/")
+
+ragg::agg_tiff("Fig4.tiff", width = 7.5, height = 6, units = "in", res = 300)
 
 # Final plot
-(n_days+d_days)/(n_duration+d_duration)/(n_intensity+d_intensity) + plot_layout(guides="collect")
+((n_days / n_duration / n_intensity) | (d_days / d_duration / d_intensity)) + plot_layout(guides="collect") # 1200 x 800 is good
+
+dev.off()
