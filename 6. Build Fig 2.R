@@ -5,10 +5,12 @@ library(dplyr)
 library(ggplot2)
 library(heatwaveR)
 library(lubridate)
+library(patchwork)   
+library(ragg)
 
 # Open nc
 # Access netCDF of downscaled sea surface temperature data. This data was published in Pozo Buil et al. (2021) and is available upon request from the corresponding author of that paper. 
-nc = nc_open("C:/Users/kaila/Dropbox/Kaila_newMCSs/SST netCDFs/sst_gfdl.nc")
+nc = nc_open('/Volumes/One Touch/Dropbox Backup [MCS Stuff] 1-11-25/Kaila_newMCSs/SST netCDFs/sst_gfdl.nc')
 # Extract spatiotemporal data from nc
 lon = ncvar_get(nc, "lon")[,1]; lat = ncvar_get(nc, "lat")[1,]
 sst = ncvar_get(nc, "sst")
@@ -63,7 +65,8 @@ mcs_detr <- dplyr::select(mcs_detr[["event"]])
 #### 4. Prepare to plot ####
 
 # Set theme pre-plotting
-theme_set(theme(axis.title=element_text(size=20), axis.text=element_text(size=16), legend.text=element_text(size=16), plot.title=element_text(size=20, hjust=0)))
+theme <- theme_set(theme_classic())
+theme_set(theme(axis.title=element_text(size=10,face="bold"), axis.text=element_text(size=8), legend.text=element_text(size=8), plot.title=element_text(size=12, hjust=0,face="bold"),legend.title=element_text(size=10,face="bold"),panel.border=element_rect(color="black",fill=NA,linewidth=1),axis.line=element_blank()))
 
 # Saving all as 1000 x 500
 
@@ -111,7 +114,7 @@ detr.slice = slice(clim_detr, which(clim_detr$t=="1990-01-01"):which(clim_detr$t
 #sst.slice <- slice(ts, which(ts$t=="1990-01-01"):which(ts$t=="1993-12-31"))
 
 # Plot SST and anomalies together
-ggplot(data=ts.trended, aes(x=t)) +
+a <- ggplot(data=ts.trended, aes(x=t)) +
   geom_line(aes(y=sst, color="Modeled SST")) +
   geom_line(aes(y=detrended, color="Detrended SSTa")) +
   scale_color_manual("", values=c("Modeled SST"="grey70", "Detrended SSTa"="#bc3754")) +
@@ -119,11 +122,11 @@ ggplot(data=ts.trended, aes(x=t)) +
   theme_classic() + theme_get() +
   theme(legend.position="top", legend.background = element_rect(color="black"))+
   #guides(color=guide_legend(nrow=2,byrow=TRUE)) +
-  ylab("Sea Surface Temperature (°C)") + xlab("Date (Year-Month)") + ggtitle("A. 120 Years of SST")
+  ylab("Sea Surface Temperature (°C)") + xlab("Date (Year-Month)") + ggtitle("A. 120 Years of Sea Surface Temperature")
 
 #### 8. All together now? ####
 
-ggplot() +
+b<- ggplot() +
     geom_line(data=trad.slice, aes(x=t, y=sst,colour="Modeled SST"))+
     geom_line(data=trad.slice, aes(x=t, y = seas, colour = "Baseline"))+
     geom_line(data=trad.slice, aes(x=t, y = thresh, colour = "Cold-spell threshold"))+
@@ -138,5 +141,12 @@ ggplot() +
     theme_classic()+theme_get()+
     theme(legend.position="top", legend.background=element_rect(color="black"), legend.box="vertical")+
     guides(color=guide_legend(nrow=2,byrow=TRUE)) +
-    ylab("Sea Surface Temperature (°C)")+xlab("Date (Year-Month)") + ggtitle("B. Example MCS Detection")
-    
+    ylab("Sea Surface Temperature (°C)")+xlab("Date (Year-Month)") + ggtitle("B. Example Marine Cold-spell Detection")
+
+setwd("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 Final Materials/300dpi Figures/")
+
+ragg::agg_tiff("Fig2.tiff", width = 7, height = 7, units = "in", res = 300)
+
+a / b # 800 x 900 is good with lowres save image
+
+dev.off()
