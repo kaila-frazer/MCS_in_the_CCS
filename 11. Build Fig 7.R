@@ -10,21 +10,23 @@ library(terra)
 library(raster)
 library(rts)
 library(remotes)
-library(phenoTS)
 library(heatwaveR)
 library(mgcv)
 library(patchwork)
 library(ggpattern)
 library(vroom)
+library(ragg)
+library(ggside)
+setwd("/Users/kailafrazer/")
 
 #### Gather climatological SSTs -- preliminary files ####
 
 # Get Sanct cells
-uqid <- rast("{GitHub repository}/roms_unique_id.grd")
-mb <- vect("{GitHub repository}/NMS Shapefiles/mb/mbnms_py.shp")
+uqid <- rast("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/roms_unique_id.grd")
+mb <- vect("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 GitHub/NMS Shapefiles/mb/mbnms_py.shp")
 mb_cells <- terra::extract(uqid, mb) %>% na.omit() %>% dplyr::select(layer) %>% rename(pixel_id=layer) %>% mutate(sanct_id="mb")
 
-#### Gather climatological SSTs -- IPSL ####
+#### Gather climatological SSTs -- IPSL -- one time run ####
 
 # Read in IPSL MB SST time series - generated in "Desktop/Marine Cold-spell Manuscript/Figures/Fig 6/Time Series/Creating Time Series.R"
 i_ts = readRDS("C:/Users/kaila/Desktop/Marine Cold-Spell Manuscript/Figures/Fig 7/Time Series/ipsl_mb_ts.rds")
@@ -52,7 +54,7 @@ is_mcs_dates = dplyr::rename(is_mcs_dates, date_flag=.) %>% distinct()
 is_fmcs_2020 = inner_join(is_only2020, is_mcs_dates)
 is_fmcs_2080 = inner_join(is_only2080, is_mcs_dates)
 
-#### Gather climatological SSTs -- HAD ####
+#### Gather climatological SSTs -- HAD -- one time run ####
 
 # Read in HAD MB SST time series - generated in "Desktop/Marine Cold-spell Manuscript/Figures/Fig 6/Time Series/Creating Time Series.R"
 h_ts = readRDS("C:/Users/kaila/Desktop/Marine Cold-Spell Manuscript/Figures/Fig 6/Time Series/had_mb_ts.rds")
@@ -80,7 +82,7 @@ hs_mcs_dates = dplyr::rename(hs_mcs_dates, date_flag=.) %>% distinct()
 hs_fmcs_2020 = inner_join(hs_only2020, hs_mcs_dates)
 hs_fmcs_2080 = inner_join(hs_only2080, hs_mcs_dates)
 
-#### Gather climatological SSTs -- GFDL ####
+#### Gather climatological SSTs -- GFDL -- one time run ####
 
 # Read in GFDL MB SST time series - generated in "Desktop/Marine Cold-spell Manuscript/Figures/Fig 6/Time Series/Creating Time Series.R"
 g_ts = readRDS("C:/Users/kaila/Desktop/Marine Cold-Spell Manuscript/Figures/Fig 6/Time Series/gfdl_mb_ts.rds")
@@ -108,37 +110,6 @@ gs_mcs_dates = dplyr::rename(gs_mcs_dates, date_flag=.) %>% distinct()
 gs_fmcs_2020 = inner_join(gs_only2020, gs_mcs_dates)
 gs_fmcs_2080 = inner_join(gs_only2080, gs_mcs_dates)
 
-#### Ensemble SSTs - means, didn't work since MCSs aren't all predicted on the same days :) ####
-
-win2020 = full_join(rename(gs_win2020, gval=mean_value), rename(is_win2020, ival=mean_value)) %>% full_join(rename(hs_win2020, hval=mean_value)) %>% 
-  mutate(val = ((gval + ival + hval) /3))
-win2080 = full_join(rename(gs_win2080, gval=mean_value), rename(is_win2080, ival=mean_value)) %>% full_join(rename(hs_win2080, hval=mean_value)) %>% 
-  mutate(val = ((gval + ival + hval) /3))
-fixedwin = full_join(rename(gs_fixedwin, gval=mean_value), rename(is_fixedwin, ival=mean_value)) %>% full_join(rename(hs_fixedwin, hval=mean_value)) %>% 
-  mutate(val = ((gval + ival + hval) /3))
-
-dtmcs_2020 = full_join(rename(gs_dtmcs_2020, gval=mean_value), rename(is_dtmcs_2020, ival=mean_value)) %>% 
-  full_join(rename(hs_dtmcs_2020, hval=mean_value)) %>% 
-  mutate(val = ((gval + ival + hval) /3))
-dtmcs_2080 = full_join(rename(gs_dtmcs_2080, gval=mean_value), rename(is_dtmcs_2080, ival=mean_value)) %>% 
-  full_join(rename(hs_dtmcs_2080, hval=mean_value)) %>% 
-  mutate(val = ((gval + ival + hval) /3))
-
-fmcs_2020 = full_join(rename(gs_fmcs_2020, gval=mean_value), rename(is_fmcs_2020, ival=mean_value)) %>% 
-  full_join(rename(hs_fmcs_2020, hval=mean_value)) %>% 
-  mutate(val = ((gval + ival + hval) /3))
-fmcs_2080 = full_join(rename(gs_fmcs_2080, gval=mean_value), rename(is_fmcs_2080, ival=mean_value)) %>% 
-  full_join(rename(hs_fmcs_2080, hval=mean_value)) %>% 
-  mutate(val = ((gval + ival + hval) /3))
-
-saveRDS(win2020, "C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 6/win2020_ensemble.rds")
-saveRDS(win2080, "C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 6/win2080_ensemble.rds")
-saveRDS(fixedwin, "C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 6/fixedwin_ensemble.rds")
-saveRDS(dtmcs_2020, "C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 6/dtmcs_2020_ensemble.rds")
-saveRDS(dtmcs_2080, "C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 6/dtmcs_2080_ensemble.rds")
-saveRDS(fmcs_2020, "C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 6/fmcs_2020_ensemble.rds")
-saveRDS(fmcs_2080, "C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 6/fmcs_2080_ensemble.rds")
-
 #### Ensemble SSTs - all values :) ####
 
 win2020 = full_join(gs_win2020, is_win2020) %>% full_join(hs_win2020)
@@ -161,13 +132,13 @@ saveRDS(fmcs_2080, "C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/
 
 #### Read in ensemble SSTs ####
 
-win2020 <- readRDS("C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 7/win2020_ensemble_spread.rds")
-win2080 <- readRDS("C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 7/win2080_ensemble_spread.rds")
-fixedwin <- readRDS("C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 7/fixedwin_ensemble_spread.rds")
-dtmcs_2020 <- readRDS("C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 7/dtmcs_2020_ensemble_spread.rds")
-dtmcs_2080 <- readRDS("C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 7/dtmcs_2080_ensemble_spread.rds")
-fmcs_2020 <- readRDS("C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 7/fmcs_2020_ensemble_spread.rds")
-fmcs_2080 <- readRDS("C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figures/Fig 7/fmcs_2080_ensemble_spread.rds")
+win2020 <- readRDS("Desktop/MCS/Marine Cold-spell Manuscript/Original Submission Figures/Fig 7/win2020_ensemble_spread.rds")
+win2080 <- readRDS("Desktop/MCS/Marine Cold-spell Manuscript/Original Submission Figures/Fig 7/win2080_ensemble_spread.rds")
+fixedwin <- readRDS("Desktop/MCS/Marine Cold-spell Manuscript/Original Submission Figures/Fig 7/fixedwin_ensemble_spread.rds")
+dtmcs_2020 <- readRDS("Desktop/MCS/Marine Cold-spell Manuscript/Original Submission Figures/Fig 7/dtmcs_2020_ensemble_spread.rds")
+dtmcs_2080 <- readRDS("Desktop/MCS/Marine Cold-spell Manuscript/Original Submission Figures/Fig 7/dtmcs_2080_ensemble_spread.rds")
+fmcs_2020 <- readRDS("Desktop/MCS/Marine Cold-spell Manuscript/Original Submission Figures/Fig 7/fmcs_2020_ensemble_spread.rds")
+fmcs_2080 <- readRDS("Desktop/MCS/Marine Cold-spell Manuscript/Original Submission Figures/Fig 7/fmcs_2080_ensemble_spread.rds")
 
 #### Blue whale seasonal response curves ####
 
@@ -180,7 +151,7 @@ fmcs_2080 <- readRDS("C:/Users/kaila/Desktop/Marine Cold-spell Manuscript/Figure
 #7. Find order of importance of variables in model
 
 #1. Read in four blue whale models
-setwd("C:/Users/kaila/Desktop/Honors/BLWH Models/")
+setwd("Desktop/MCS/Honors/BLWH Models/")
 blwh.sf.gam=readRDS("GAMs/blwh.res1.gam.sf.mod1.rds")
 blwh.ws.gam=readRDS("GAMs/blwh.res1.gam.ws.mod1.rds")
 
@@ -253,7 +224,7 @@ summary.gam(blwh.ws.gam)
 #4. Find importance of environmental variables
 
 #1. Read in four blue whale models
-lbst.brt=readRDS("D:/Dropbox Backup [MCS Stuff] 1-11-25/Models/Kaila/lbst_noSSH.res1.tc3.lr01.single.rds")
+setwd("/Volumes/One Touch/"); lbst.brt=readRDS("Dropbox Backup [MCS Stuff] 1-11-25/Models/Kaila/lbst_noSSH.res1.tc3.lr01.single.rds")
 
 summary.gbm(lbst.brt) # gaining info on variable importance
 
@@ -284,9 +255,8 @@ summary.gbm(lbst.brt)
 #### Compile final plots ####
 
 # Set theme pre-plotting
-theme_set(theme(axis.title=element_text(size=20), axis.text=element_text(size=16), legend.text=element_text(size=16), legend.title=element_text(size=16), legend.background=element_blank(), plot.title=element_text(size=20), ggside.axis.text.y=element_blank(), ggside.axis.ticks.y=element_blank(), ggside.axis.line.y=element_blank()))
-
-#play
+theme <- theme_set(theme_classic())
+theme_set(theme(axis.title=element_text(size=10,face="bold"), axis.text=element_text(size=8), legend.text=element_text(size=8), legend.title=element_text(size=10,face="bold"), plot.title=element_text(size=12,face="bold",hjust=0),panel.grid.major=element_blank(),legend.background=element_blank(),ggside.axis.text.y=element_blank(),ggside.axis.ticks.y=element_blank(),ggside.axis.line.y=element_blank(),plot.subtitle=element_text(size=8)))
 
 blwh_2020_juloct_dt <- {ggplot() + 
   # blue whale response curves
@@ -319,37 +289,10 @@ lbst_2080_juloct_dt <- {ggplot() +
     # themes
     theme_classic()+theme_get()+theme()}
 
+setwd("/Users/kailafrazer/Desktop/MCS/Marine Cold-spell Manuscript/PLOS Submission 2 Final Materials/300dpi Figures/")
+
+ragg::agg_tiff("Fig7.tiff", width = 7.5, height = 4, units = "in", res = 300)
+
 blwh_2020_juloct_dt + lbst_2080_juloct_dt
 
-#### Fixed MCS figures for Mike ####
-
-blwh_2020_juloct_fix <- {ggplot() + 
-    # blue whale response curves
-    geom_line(data=jul_oct_response,aes(x=sst,y=sf.est))+
-    geom_ribbon(data=jul_oct_response,aes(x=sst,y=sf.est,ymin=sf.low, ymax=sf.up), fill="grey80", alpha=0.5)+
-    xlab("SST")+ylab("")+
-    # MB histogram
-    geom_density(data=fmcs_2020,aes(x=mean_value,y=after_stat(ndensity), fill="2020 Fixed MCS SSTs"), color="#586F7C",linewidth=0,alpha=.3)+
-    geom_density(data=fixedwin,aes(x=mean_value,y=after_stat(ndensity), fill="1980-2009\nTypical SSTs"), color="#FB4B4E", linewidth=0, alpha=0.3)+
-    geom_vline(xintercept=mean(fmcs_2020$mean_value), color="#586F7C")+
-    geom_vline(xintercept=mean(fixedwin$mean_value), color="#FB4B4E")+
-    # colors
-    scale_fill_manual("", values=c("1980-2009\nTypical SSTs" = "#FB4B4E", "2020 Fixed MCS SSTs" = "#586F7C")) +
-    # themes
-    labs(title="C. Blue Whale\nResponse Curve", subtitle="Model. Ensemble\nSanct. MB\nDecade. 2020\nType. Fixed MCS")+theme_classic()+theme_get() + scale_x_continuous(limits=c(7,24))}
-
-lbst_2080_juloct_fix <- {ggplot() + 
-    # Response curve
-    geom_line(data=lbst.dat, aes(x=sst,y=y))+xlim(7,28)+
-    xlab("SST")+ylab("Habitat Response")+
-    # MB histogram
-    geom_density(data=fmcs_2080,aes(x=mean_value,y=after_stat(ndensity), fill="2080 Fixed MCS SSTs"), color="#586F7C",linewidth=0,alpha=.3)+
-    geom_density(data=fixedwin,aes(x=mean_value,y=after_stat(ndensity), fill="1980-2009\nTypical SSTs"), color="#FB4B4E", linewidth=0, alpha=0.3)+
-    geom_vline(xintercept=mean(fmcs_2080$mean_value), color="#586F7C")+
-    geom_vline(xintercept=mean(fixedwin$mean_value), color="#FB4B4E")+
-    # colors
-    scale_fill_manual("", values=c("1980-2009\nTypical SSTs" = "#FB4B4E", "2080 Fixed MCS SSTs" = "#586F7C")) +
-    # themes
-    ggtitle("D. Leatherback Sea Turtles\nResponse Curve", subtitle="Model. Ensemble\nSanct. MB\nDecade. 2080\nType. Fixed MCS")+theme_classic()+theme_get()+theme() + ylab("") + scale_x_continuous(limits=c(7,24))}
-
-(blwh_2020_juloct_dt + lbst_2080_juloct_dt) / (blwh_2020_juloct_fix + lbst_2080_juloct_fix)
+dev.off()
