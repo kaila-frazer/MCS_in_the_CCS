@@ -37,7 +37,7 @@ calimap <- ggplot()+
   geom_sf(data=ch, aes(fill="\n4. Chumash Heritage (CH)\n"))+
   coord_sf(xlim=c(-118,-130), ylim=c(32,44))+
   scale_color_manual("Bathymetry", values=c("NMS" = "#ffc3b1", "200m Shelf Break" = "lightblue4", "2000m Isobath" = "blue4")) +
-  scale_fill_manual("National Marine Sanctuaries", values=c("\n6. Land\n" = "white", "\n1. Greater Farallones (GF)\n"="#fde725", "\n 2. Cordell Bank (CB)\n"="#5ec962", "\n3. Monterey Bay (MB)\n"="#21918c", "\n4. Chumash Heritage (CH)\n"="#3b528b", "\n5. Channel Islands (CI)\n"="#440154"))+xlab("Longitude") + ylab("Latitude")+
+  scale_fill_manual("National Marine Sanctuaries", values=c("\n6. Land\n" = "white", "\n1. Greater Farallones (GF)\n"="#fde725", "\n2. Cordell Bank (CB)\n"="#5ec962", "\n3. Monterey Bay (MB)\n"="#21918c", "\n4. Chumash Heritage (CH)\n"="#3b528b", "\n5. Channel Islands (CI)\n"="#440154"))+xlab("Longitude") + ylab("Latitude")+
   theme(axis.text.x=element_text(margin=margin(t=5)), legend.background = element_rect(color="black"))+guides(linetype = guide_legend(override.aes = list(fill = "white")))
 
 
@@ -50,3 +50,4 @@ ragg::agg_tiff("Fig1.tiff", width = 7, height = 7, units = "in", res = 300)
 ggdraw(calimap) + draw_plot(americamap, x=.39, y=.69, width=.25, height=.20) # 800 x 500 pixels at 72 dpi
 
 dev.off()
+
